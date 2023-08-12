@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <script>
+    let chatHistory = ${JSON.stringify(message)}
+  </script>
+
+  <script>
+    for (let msg of chatHistory) {
+      if (msg.role === "user") {
+        document.write('<p> You: ' + msg.content + '</p>')
+      } else {
+        document.write('<p style="color: #00a89a;">AI: ' + msg.content + '</p>')
+      }
+    }
+  </script>
+
+
+
+</body>
+</html>
