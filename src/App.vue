@@ -1,6 +1,5 @@
 <script setup>
   import {ConfigProvider} from 'vant'
-  import { ref } from 'vue'
 </script>
 
 <template>
