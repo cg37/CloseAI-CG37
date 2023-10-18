@@ -1,10 +1,10 @@
 import { createRouter,createWebHashHistory } from "vue-router";
 
-import MainView from '../router/MainView'
-import ChatListView from "../router/ChatListView"
-import AllMasks from "../router/AllMasks"
-import MeView from "../router/MeView"
-import ChatDetailView from "../router/ChatDetailView"
+import MainView from '../views/MainView.vue'
+import ChatListView from "../views/ChatListView.vue"
+import AllMasks from "../views/AllMasks.vue"
+import MeView from "../views/MeView.vue"
+import ChatDetailView from "../views/ChatDetailView.vue"
 
 const router = createRouter({
   base: '.',
@@ -12,10 +12,10 @@ const router = createRouter({
   routes:[
     {
       path: '/',
-      name: home,
+      name: "home",
       component: MainView,
       children:[{
-        path: '',
+        path: '/',
         component: ChatListView
       },{
         path:'/masks',
