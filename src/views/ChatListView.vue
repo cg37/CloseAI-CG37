@@ -1,23 +1,3 @@
-<script setup>
-  import { useRouter } from "vue-router"
-  import { useChatStore } from "../store";
-  let store = useChatStore()
-  let router = useRouter()
-
-  function addChat(){
-    let id = store.addChat()
-    router.push('/chat' + id)
-  }
-</script>
-
-<script>
-  export default {
-    updated(){
-      console.log('ChatListView updated')
-    }
-  }
-</script>
-
 <template class="flex flex-col grow">
     <div class="w-full max-h-screen grow">
       <h1 class="title w-full h-14 justify-center items-center flex border-b text-white text-2xl">
@@ -28,10 +8,10 @@
           <router-link :to="'/chat/'+chat.id" class="flex gap-1 grow overflow-hidden">
             <img class="w-10 h-10 m-1 rounded" src="../pic/tzxl.jpg" alt="一个头像">
             <div class="flex flex-col justify-center overflow-hidden">
-              <span class="">
+              <span class="text-white">
                 {{ chat.summary || "new Chat" }}
               </span>
-              <span class="text-xs text-grey-500 truncate max-w-full">
+              <span class="text-xs text-slate-200	 truncate max-w-full">
                 {{ chat.messages.at(-1)?.content }}
               </span>
             </div>
@@ -50,4 +30,23 @@
 
 </template>
 
+<script setup>
+  import { useRouter } from "vue-router"
+  import { useChatStore } from "../store";
+  let store = useChatStore()
+  let router = useRouter()
+
+  function addChat(){
+    let id = store.addChat()
+    router.push('/chat/' + id)
+  }
+</script>
+
+<script>
+  export default {
+    updated(){
+      console.log('ChatListView updated')
+    }
+  }
+</script>
 

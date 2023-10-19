@@ -102,7 +102,7 @@
         return chat.value.messages
       })
 
-      let masks=computed(()=>store.presetMasks.concat(store.customMasks))
+      let masks=computed(()=>store.presetMasks)
 
       onMounted(()=> {
         msgsView.value.scrollTo(0, 99999)
