@@ -5,7 +5,7 @@
 
 <template>
   <ConfigProvider class="h-full" theme="dark">
-    <div class="App.vue h-full relative">
+    <div class="App.vue h-full relative max-h-screen flex flex-col rounded-md">
       <router-view />
 
     </div>

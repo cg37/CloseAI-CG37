@@ -3,7 +3,7 @@ import { createRouter,createWebHashHistory } from "vue-router";
 import MainView from '../views/MainView.vue'
 import ChatListView from "../views/ChatListView.vue"
 import AllMasks from "../views/AllMasks.vue"
-import MeView from "../views/MeView.vue"
+import SettingsView from "../views/SettingsView.vue"
 import ChatDetailView from "../views/ChatDetailView.vue"
 
 const router = createRouter({
@@ -21,8 +21,8 @@ const router = createRouter({
         path:'/masks',
         component: AllMasks
       }, {
-        path: '/me',
-        component:MeView
+        path: '/settings',
+        component:SettingsView
       }]
     },
     {

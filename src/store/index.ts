@@ -88,13 +88,13 @@ export var useChatStore = defineStore('chatStore', {
       chats: [
         {
           id: 'm4muhwn0pdg',
-          summary: '新的聊天',
+          summary: 'new Chat',
           messages: [
           ],
         },
         {
           id: 'm4muhwn0pdd',
-          summary: '新的聊天',
+          summary: 'new Chat',
           messages: [
           ],
         }
