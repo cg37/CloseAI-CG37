@@ -87,17 +87,17 @@ import { fetchEventSource } from '@microsoft/fetch-event-source'
 // }
 
 export async function getAnswerStream2(messages, onRecvToken = () => { }) {
-  let store = useChatStore()
+  var store = useChatStore()
 
-  if (store.config.apiBase == "") {
-    return "您没有配置api地址，请到设置页面填入api地址和api key"
+  if (store.config.apiBase == '') {
+    return '您没有配置api地址，请到设置页面填入api地址和api key'
   }
 
-  return await fetchEventSource(store.config.apiBase, {
-    method: "post",
+  return await fetchEventSource("https://api.openai-proxy.org/v1/chat/completions", {
+    method: 'post',
     headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${store.config.apiKey}`,
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer sk-2F8vBg50Bz7bdfxkomR4B5drBwvLs8In3EUISGflhvmSZkz1",
     },
     body: JSON.stringify({
       model: store.config.model,
@@ -112,16 +112,16 @@ export async function getAnswerStream2(messages, onRecvToken = () => { }) {
     }),
     openWhenHidden: true,
     onmessage(ev) {
-      let data = ev.data
-      if (data === '[DONE]') {
+      var data = ev.data
+      if (data == '[DONE]') {
 
       } else {
-        let obj = JSON.parse(data)
-        let token = obj.choices[0].delta.content
-        if (typeof token === "string") {
+        var obj = JSON.parse(data)
+        var token = obj.choices[0].delta.content
+        if (typeof token == 'string') {
           try {
             onRecvToken(token)
-          } catch(e) {
+          } catch (e) {
             console.log(e)
           }
         }
@@ -133,11 +133,11 @@ export async function getAnswerStream2(messages, onRecvToken = () => { }) {
 export async function getSummary(messages) {
   let store = useChatStore()
 
-  let res = await fetch(store.config.apiBase, {
+  let res = await fetch("https://api.openai-proxy.org/v1/chat/completions", {
     method: "post",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${store.config.apiKey}`
+      "Authorization": "Bearer sk-2F8vBg50Bz7bdfxkomR4B5drBwvLs8In3EUISGflhvmSZkz1"
     },
     body: JSON.stringify({
       model: store.config.model,

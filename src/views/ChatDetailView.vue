@@ -1,13 +1,13 @@
 
 
 <template>
-  <div class="flex flex-col h-full overflow-hidden bg-slate-900">
+  <div class="flex flex-col h-full overflow-hidden bg-slate-900 rounded-md">
     <h1 class="title w-full h-14 justify-center items-center flex border-b text-white text-2xl">
       <router-link class="absolute left-0 h-full px-2 justify-center items-center flex" to="/">返回</router-link>
       <span>{{ chat.summary || 'New Chat' }}</span>
     </h1>
 
-    <div ref="msgsView" @touchmove="setAutoScroll" @mousewheel="setAutoScroll" class="grow bg-zinc-900 p-2 space-y-2 overflow-auto">
+    <div ref="msgsView" @touchmove="setAutoScroll" @mousewheel="setAutoScroll" class="grow bg-zinc-900 p-2 space-y-2 overflow-auto rounded-lg">
       <template v-if="messages.length === 0">
         <h2 class="mx-auto text-white text-center">选择面具</h2>
         <div class="space-y-2">
@@ -50,10 +50,10 @@
         </div>
       </template>
     </div>
-    <div id="inputField" class="w-full flex flex-row-reverse bg-transparent">
+    <div id="inputField" class="w-full flex flex-row-reverse">
      <button class=" py-0 px-4
         w-24
-        bg-sky-500/100 rounded-r-lg
+        bg-sky-500/100
         text-md text-white font-semibold
         hover:bg-blue-700 focus:outline-none
         focus:ring-2 focus:ring-blue-400
@@ -66,11 +66,6 @@
       <textarea class="w-full h-full
             py-2 px-2
             resize-none bg-white
-            border-b border-gray-400
-            border-t border-gray-400
-            border-l border-gray-400
-
-            rounded-l-lg text-base
             focus:outline-none
             focus:border-slate-500"
             placeholder="Try to say something"
@@ -159,7 +154,7 @@
         let proxiedAnswerObj = chat.value.messages.at(-1)
 
         await getAnswerStream2(messages.value, async token => {
-          proxiedAnswerObj.content = proxiedAnswerObj + token
+          proxiedAnswerObj.content = proxiedAnswerObj.content + token
 
           if (autoScroll.value) {
             await nextTick()
@@ -179,6 +174,7 @@
         userInput,
         msgsView,
         store,
+        autoScroll,
         send,
         setAutoScroll,
         setMask
