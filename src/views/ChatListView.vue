@@ -1,8 +1,8 @@
 <script setup>
   import { useRouter } from "vue-router"
   import { useChatStore } from "../store";
-  var store = useChatStore()
-  var router = useRouter()
+  let store = useChatStore()
+  let router = useRouter()
 
   function addChat(){
     let id = store.addChat()
