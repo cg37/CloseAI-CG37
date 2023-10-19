@@ -8,7 +8,7 @@
     </h1>
 
     <div ref="msgsView" @touchmove="setAutoScroll" @mousewheel="setAutoScroll" class="grow bg-zinc-900 p-2 space-y-2 overflow-auto">
-      <template v-if="message.length === 0">
+      <template v-if="messages.length === 0">
         <h2 class="mx-auto text-white text-center">选择面具</h2>
         <div class="space-y-2">
             <div class="flex flex-col border rounded-lg p-2 text-white" v-for="mask of masks" @click="setMask(mask)">
@@ -18,8 +18,9 @@
         </div>
       </template>
       <template v-else>
-        helloworld
-        <div v-for="(msg, idx) of messages" :key="idx" :class="'msg-' + msg.rold" class="[&.msg-assistang]:mr-4 [&.msg-user]:ml-4 [&.msg-system]:ml-4 group">
+        <h2 class="mx-auto text-white text-center">start chat</h2>
+
+        <div v-for="(msg, idx) of messages" :key="idx" :class="'msg-' + msg.role" class="[&.msg-assistang]:mr-4 [&.msg-user]:ml-4 [&.msg-system]:ml-4 group">
           <div
             :style="{fontSize: store.config.fontSize + 'px'}"
             class="
@@ -74,16 +75,18 @@
             focus:border-slate-500"
             placeholder="Try to say something"
             id="questionInput"
+            @keyup.enter.ctrl="send" v-model="userInput"
             ></textarea>
     </div>
   </div>
 </template>
 
 <script>
-  import { defineComponent, computed,ref } from "vue"
+  import { defineComponent, computed, ref, nextTick, onMounted } from "vue"
   import { useChatStore } from '../store'
   import { useRoute, useRouter} from 'vue-router'
   import { ActionSheet } from 'vant'
+  import { getAnswerStream2, getSummary} from "../chatgpt-api.js"
 
 
   export default defineComponent({
@@ -98,11 +101,28 @@
 
       let msgsView = ref()
 
-      let message = computed(()=>{
+      let autoScroll = ref(true)
+
+      let messages = computed(()=>{
         return chat.value.messages
       })
 
       let masks=computed(()=>store.presetMasks.concat(store.customMasks))
+
+      onMounted(()=> {
+        msgsView.value.scrollTo(0, 99999)
+      })
+
+      function setAutoScroll(){
+        let el = msgsView.value
+        if (Math.abs(el.offsetHeight + el.scrollTop - el.scrollHeight) <= 10) {
+          autoScroll.value = true
+        } else {
+          autoScroll.value = false
+        }
+      }
+
+
 
       function setMask(mask){
         chat.value.messages.push({
@@ -112,11 +132,56 @@
         chat.value.summary = mask.title
       }
 
+      let userInput = ref('')
+
+      async function send(){
+        if (userInput.value == '') {
+          return
+        }
+        chat.value.messages.push({
+          role: "user",
+          content: userInput.value
+        })
+
+        userInput.value = ''
+
+        await nextTick()
+        msgsView.value.scrollTo(0,99999)
+
+        autoScroll.value = true
+
+        let answerObj = {
+          role: "assistant",
+          content: ''
+        }
+
+        chat.value.messages.push(answerObj)
+        let proxiedAnswerObj = chat.value.messages.at(-1)
+
+        await getAnswerStream2(messages.value, async token => {
+          proxiedAnswerObj.content = proxiedAnswerObj + token
+
+          if (autoScroll.value) {
+            await nextTick()
+            msgsView.value.scrollTo(0, 99999)
+          }
+        })
+
+        if (!chat.value.summary || chat.value.summary === "new Chat") {
+          chat.value.summary = await getSummary(chat.value.messages)
+        }
+      }
 
       return {
         chat,
-        message,
-        masks
+        messages,
+        masks,
+        userInput,
+        msgsView,
+        store,
+        send,
+        setAutoScroll,
+        setMask
       }
     }
   })
