@@ -6,7 +6,7 @@
 
   function addChat(){
     let id = store.addChat()
-    router.push('/chat' + id)
+    router.push('/chat/' + id)
   }
 </script>
 
