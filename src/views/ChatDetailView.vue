@@ -3,8 +3,10 @@
 <template>
   <div class="flex flex-col h-full overflow-hidden bg-slate-900 rounded-md">
     <h1 class="title w-full h-14 justify-center items-center flex border-b text-white text-2xl">
-      <router-link class="absolute left-0 h-full px-2 justify-center items-center flex" to="/">返回</router-link>
+      <router-link class="absolute left-0 h-full px-2 justify-center items-center flex select-none" to="/">Return</router-link>
       <span>{{ chat.summary || 'New Chat' }}</span>
+      <span @click="showActions = true" class="cursor-pointer absolute font-bold right-0 h-full px-2  justify-center items-center flex select-none">...</span>
+      <ActionSheet cancel-text="Cancel" description="Actions..." v-model:show="showActions" :actions="actions"/>
     </h1>
 
     <div ref="msgsView" @touchmove="setAutoScroll" @mousewheel="setAutoScroll" class="grow bg-zinc-900 p-2 space-y-2 overflow-auto rounded-lg">
@@ -80,8 +82,9 @@
   import { defineComponent, computed, ref, nextTick, onMounted } from "vue"
   import { useChatStore } from '../store'
   import { useRoute, useRouter} from 'vue-router'
-  import { ActionSheet } from 'vant'
   import { getAnswerStream2, getSummary} from "../chatgpt-api.js"
+  import { ActionSheet, showConfirmDialog } from 'vant'
+
 
 
   export default defineComponent({
@@ -91,6 +94,7 @@
     },
     setup(props) {
       let route = useRoute()
+      let router = useRouter()
       let store = useChatStore()
       let chat = computed(()=>store.chats.find(it=>it.id == route.params.id))
 
@@ -117,6 +121,29 @@
         }
       }
 
+      const showActions = ref(false)
+      const actions = [
+        {
+          name: "Change chat title",
+          callback: function (){
+            let summary = prompt('Please input new title', chat.summary)
+            chat.summary = summary
+            showActions.value = false
+          }
+      }, {
+        name: "Delete",
+        callback: async function () {
+          try {
+            await showConfirmDialog({
+              message: 'Sure to Delete?'
+            })
+            store.deleteChat(route.params.id)
+            router.replace('/')
+          } catch {
+
+          }
+        }
+      }]
 
 
       function setMask(mask){
@@ -175,6 +202,8 @@
         msgsView,
         store,
         autoScroll,
+        showActions,
+        actions,
         send,
         setAutoScroll,
         setMask
@@ -182,3 +211,18 @@
     }
   })
 </script>
+
+<style>
+div::-webkit-scrollbar {
+  width: 10px;
+}
+
+div::-webkit-scrollbar-track {
+  background-color: rgb(31, 28, 28);
+}
+
+div::-webkit-scrollbar-thumb {
+  background: #434141;
+  border-radius: 25px;
+}
+</style>

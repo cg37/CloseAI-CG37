@@ -29,7 +29,7 @@
             <img class="w-10 h-10 m-1 rounded" src="../pic/tzxl.jpg" alt="一个头像">
             <div class="flex flex-col justify-center overflow-hidden">
               <span class="">
-                {{ chat.summary || "new Chat" }}
+                {{ chat.summary || "New Chat" }}
               </span>
               <span class="text-xs text-grey-500 truncate max-w-full">
                 {{ chat.messages.at(-1)?.content }}
