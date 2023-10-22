@@ -35,8 +35,9 @@ export var useChatStore = defineStore('chatStore', {
         presence_penalty: 0, //话题新鲜度
         frequency_penalty: 0, //频率惩罚度
         fontSize: 14,
-        apiBase: 'https://api.openai-proxy.org/v1/chat/completions',
-        apiKey: "sk-2F8vBg50Bz7bdfxkomR4B5drBwvLs8In3EUISGflhvmSZkz1",
+        apiBase: 'https://api.openai-proxy.org',
+        ///v1/chat/completions',
+        apiKey:'',
       },
       presetMasks: [
         {
