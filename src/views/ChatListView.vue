@@ -28,10 +28,10 @@
           <router-link :to="'/chat/'+chat.id" class="flex gap-1 grow overflow-hidden">
             <img class="w-10 h-10 m-1 rounded" src="../pic/tzxl.jpg" alt="一个头像">
             <div class="flex flex-col justify-center overflow-hidden">
-              <span class="">
+              <span class="text-white">
                 {{ chat.summary || "New Chat" }}
               </span>
-              <span class="text-xs text-grey-500 truncate max-w-full">
+              <span class="text-xs text-grey-500 truncate max-w-full text-white">
                 {{ chat.messages.at(-1)?.content }}
               </span>
             </div>
