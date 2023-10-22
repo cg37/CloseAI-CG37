@@ -93,7 +93,7 @@ export async function getAnswerStream2(messages, onRecvToken = () => { }) {
     return '您没有配置api地址，请到设置页面填入api地址和api key'
   }
 
-  return await fetchEventSource("https://api.closeai-proxy.xyz/v1/chat/completions", {
+  return await fetchEventSource("https://api.closeai-proxy.xyz" + '/v1/chat/completions', {
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
