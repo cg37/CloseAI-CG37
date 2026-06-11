@@ -87,66 +87,70 @@ import { fetchEventSource } from '@microsoft/fetch-event-source'
 // }
 
 export async function getAnswerStream2(messages, onRecvToken = () => { }) {
-  var store = useChatStore()
+  const store = useChatStore()
 
-  if (store.config.apiBase == '') {
-    return '您没有配置api地址，请到设置页面填入api地址和api key'
+  if (!store.config.apiBase || !store.config.apiKey) {
+    throw new Error('请先配置 API 地址和 API Key')
   }
 
-  return await fetchEventSource(`${store.config.apiBase + store.config.modeURL}`, {
-    method: 'post',
+  return await fetchEventSource(`${store.config.apiBase}${store.config.modeURL}`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${store.config.apiKey}`,
     },
     body: JSON.stringify({
       model: store.config.model,
-      stream: true, //stream为真将会一点点返回,为假将会一次性返回,但要等很久
-
+      stream: true,
       temperature: store.config.temperature,
       top_p: store.config.top_p,
       presence_penalty: store.config.presence_penalty,
       frequency_penalty: store.config.frequency_penalty,
-
       messages: messages,
     }),
     openWhenHidden: true,
     onmessage(ev) {
-      var data = ev.data
-      if (data == '[DONE]') {
+      const data = ev.data
+      if (data === '[DONE]') return
 
-      } else {
-        var obj = JSON.parse(data)
-        var token = obj.choices[0].delta.content
-        if (typeof token == 'string') {
-          try {
-            onRecvToken(token)
-          } catch (e) {
-            console.log(e)
-          }
+      try {
+        const obj = JSON.parse(data)
+        const token = obj.choices?.[0]?.delta?.content
+        if (typeof token === 'string') {
+          onRecvToken(token)
         }
+      } catch (e) {
+        console.error('Parse SSE data error:', e)
       }
+    },
+    onerror(err) {
+      console.error('SSE error:', err)
+      throw err
     }
   })
 }
 
 export async function getSummary(messages) {
-  let store = useChatStore()
+  const store = useChatStore()
 
-  let res = await fetch("https://api.openai-proxy.org/v1/chat/completions", {
-    method: "post",
+  if (!store.config.apiBase || !store.config.apiKey) {
+    return '新对话'
+  }
+
+  const res = await fetch(`${store.config.apiBase}${store.config.modeURL}`, {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer sk-b9HE384HdhD6qgwFg7M2cHt1n7ziUiTmgZm4JnhWhzEhIaBM"
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${store.config.apiKey}`,
     },
     body: JSON.stringify({
       model: store.config.model,
       messages: [...messages, {
         role: 'user',
-        content:"使用4到8个字返回这个对话的简要主题, 不要解释, 不要标点, 不要语气词, 不要多余文本, 如果没有主题, 直接返回'闲聊'"
+        content: '使用4到8个字返回这个对话的简要主题, 不要解释, 不要标点, 不要语气词, 不要多余文本, 如果没有主题, 直接返回\'闲聊\''
       }]
     })
   }).then(it => it.json())
 
-  return res.choices[0].message.content
+  return res.choices?.[0]?.message?.content || '新对话'
 }
